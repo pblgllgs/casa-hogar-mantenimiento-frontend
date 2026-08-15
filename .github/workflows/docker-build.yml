@@ -1,0 +1,63 @@
+name: Build & Push Frontend
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - "**"
+      - ".github/workflows/docker-build.yml"
+
+concurrency:
+  group: frontend-image
+  cancel-in-progress: false
+
+env:
+  IMAGE_FRONTEND: pblgllgs/casa-hogar-mantenimiento-frontend
+
+jobs:
+  frontend:
+    name: Build & push frontend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Calculate next version
+        id: version
+        run: |
+          BASE_URL="https://hub.docker.com/v2/repositories/${{ env.IMAGE_FRONTEND }}/tags"
+          LAST_VERSION=$(curl -s "$BASE_URL?page_size=100" \
+            | grep -oE '"name":"0\.0\.[0-9]+"' \
+            | grep -oE '[0-9]+' | sort -n | tail -1)
+          if [ -z "$LAST_VERSION" ]; then
+            LAST_VERSION=0
+          fi
+          NEXT_VERSION=$((LAST_VERSION + 1))
+          echo "version=0.0.${NEXT_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "next version: 0.0.${NEXT_VERSION}"
+
+      - name: Build and push frontend
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          tags: |
+            ${{ env.IMAGE_FRONTEND }}:${{ steps.version.outputs.version }}
+            ${{ env.IMAGE_FRONTEND }}:latest
+          cache-from: type=registry,ref=${{ env.IMAGE_FRONTEND }}:latest
+          cache-to: type=inline
+
+      - name: Output frontend version
+        run: echo "Frontend image: ${{ env.IMAGE_FRONTEND }}:${{ steps.version.outputs.version }}"
