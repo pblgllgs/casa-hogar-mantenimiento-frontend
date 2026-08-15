@@ -1,0 +1,33 @@
+export const locationTypeLabels = {
+  BUILDING: 'Edificio',
+  FLOOR: 'Piso',
+  WING: 'Ala',
+  ROOM: 'Habitación',
+  COMMON_AREA: 'Área Común',
+  KITCHEN: 'Cocina',
+  BATHROOM: 'Baño',
+  LAUNDRY: 'Lavandería',
+  OFFICE: 'Oficina',
+  STORAGE: 'Almacén',
+  OUTDOOR: 'Exterior',
+  PARKING: 'Estacionamiento',
+  GARDEN: 'Jardín',
+  PLAYGROUND: 'Patio de Juegos',
+  MEDICAL_ROOM: 'Sala Médica',
+  DINING_ROOM: 'Comedor',
+  CLASSROOM: 'Aula',
+  LIBRARY: 'Biblioteca',
+  CHAPEL: 'Capilla',
+  OTHER: 'Otro',
+  STUDY_ROOM: 'Sala de Estudio',
+  RECREATION: 'Recreación',
+};
+
+export const locationTypeColors = {
+  BUILDING: '#2563eb', FLOOR: '#3b82f6', WING: '#60a5fa', ROOM: '#8b5cf6',
+  COMMON_AREA: '#06b6d4', KITCHEN: '#f59e0b', BATHROOM: '#14b8a6', LAUNDRY: '#a855f7',
+  OFFICE: '#6366f1', STORAGE: '#64748b', OUTDOOR: '#22c55e', PARKING: '#78716c',
+  GARDEN: '#16a34a', PLAYGROUND: '#ec4899', MEDICAL_ROOM: '#dc2626', DINING_ROOM: '#f97316',
+  CLASSROOM: '#2563eb', LIBRARY: '#7c3aed', CHAPEL: '#d946ef', OTHER: '#94a3b8',
+  STUDY_ROOM: '#0ea5e9', RECREATION: '#10b981',
+};
