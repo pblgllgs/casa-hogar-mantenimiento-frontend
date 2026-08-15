@@ -15,6 +15,8 @@ concurrency:
 
 env:
   IMAGE_FRONTEND: pblgllgs/casa-hogar-mantenimiento-frontend
+  RENDER_SERVICE_ID: srv-da0dgn7lk1mc73fnnae0
+  RENDER_OWNER_ID: tea-cspppa56l47c73f6scmg
 
 jobs:
   frontend:
@@ -62,3 +64,16 @@ jobs:
       - name: Output frontend version
         run: |
           echo "Frontend image: ${{ env.IMAGE_FRONTEND }}:${{ steps.version.outputs.version }}"
+
+      - name: Update image on Render
+        run: |
+          curl -sS -X PATCH "https://api.render.com/v1/services/${{ env.RENDER_SERVICE_ID }}" \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{"image":{"imagePath":"docker.io/${{ env.IMAGE_FRONTEND }}:${{ steps.version.outputs.version }}","ownerId":"${{ env.RENDER_OWNER_ID }}"}}'
+
+      - name: Trigger deploy on Render
+        run: |
+          curl -sS -X POST "https://api.render.com/v1/services/${{ env.RENDER_SERVICE_ID }}/deploys" \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}"
+
